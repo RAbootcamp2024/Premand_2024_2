@@ -1,7 +1,9 @@
 #library
-#install.packages("tidyverse")
+#install.packages("estimatr")
 library(tidyverse)
 library(haven)
+
+int_dir <- "C:/Users/Owner/Desktop/Premand_2024_2_new/replication/datasets/intermediate/"
 
 # Define paths
 file_name <- paste(int_dir, "SPConflict_Village.v7.6.dta", sep = "")
@@ -207,10 +209,14 @@ text2 <- '	replace foreign_terror=. if strpos(sourceurl, "http://af.reuters.com"
 	replace foreign_terror=. if strpos(sourceurl, "https://www.strategypage.com")>=1
 	replace foreign_terror=. if strpos(sourceurl, "https://www.themalaysianinsight.com")>=1'
 
+# ↑がURLを含むstataコードを文字列として保存
+# ""に含まれるURLの頭を抜き出す
 matches2 <- unlist(regmatches(text2, gregexpr('"[^"]*"', text2)))
+# なぜか入る\を削除
 matches_clean2 <- gsub('(^"|"$)','', matches2)
 print(matches_clean2)
 
+# 上記のURLが含まれる場合、foreign_terrorをNAに変更
 conflict_entries$foreign_terror <- apply(conflict_entries, 1, function(row){
   if (any(sapply(matches_clean2, function(keyword) grepl(keyword, row["sourceurl"])))){return(NA)}
   else{return(row["foreign_terror"])}
@@ -233,5 +239,14 @@ conflict_grouped <- conflict_entries %>%
   summarize(foreign_terror_max = if(all(is.na(foreign_terror))) NA else max(foreign_terror, na.rm=TRUE))
   #summarize(foreign_terror_max = max(foreign_terror, na.rm=TRUE))
 
-conflict_grouped <- conflict_grouped%>%
-  select(codelocalite, year, foreign_terror_max)
+village_data <- merge(village_data, conflict_grouped, 
+                      by = c("codelocalite", "year"))
+
+village_data <- village_data %>%
+  mutate(terror18 = case_when(nbfeatures18_250==1 & foreign_terror_max==1 ~ 1,
+         nbfeatures18_250==0 ~ 0,
+         is.na(foreign_terror_max) ~ 0,
+         nbfeatures18_250==1 & foreign_terror_max==0 ~ 0),
+         nonterror18 = case_when(terror18 == 0 & nbfeatures18_250 == 1 ~ 1 ,
+         terror18 == 1 & nbfeatures18_250 == 1 ~ 0,
+         terror18 == 0 & nbfeatures18_250 == 0 ~ 0))

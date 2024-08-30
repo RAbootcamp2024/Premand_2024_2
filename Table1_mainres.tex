@@ -1,0 +1,24 @@
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l c c c c}
+\hline
+ & TWFE \ Nearest neighbor & RCT \ Nearest neighbor & TWFE \ 10km radius & RCT \ 10km radius \\
+\hline
+Treated(Last 2 years)       & $0.00511 \; (0.00214)^{**}$ & $0.00631 \; (0.00255)^{**}$ & $0.03848 \; (0.01427)^{***}$ & $0.01675 \; (0.00883)^{*}$ \\
+\hline
+Num. obs.                   & $61198$                     & $61198$                     & $61198$                      & $61198$                    \\
+Num. groups: year           & $16$                        & $16$                        & $16$                         & $16$                       \\
+Num. groups: communeid      & $85$                        & $85$                        & $85$                         & $85$                       \\
+R$^2$ (full model)          & $0.01855$                   & $0.04476$                   & $0.10814$                    & $0.27790$                  \\
+R$^2$ (proj model)          & $0.00018$                   & $0.00020$                   & $0.00089$                    & $0.00015$                  \\
+Adj. R$^2$ (full model)     & $0.01695$                   & $0.02199$                   & $0.10668$                    & $0.26069$                  \\
+Adj. R$^2$ (proj model)     & $0.00016$                   & $0.00018$                   & $0.00087$                    & $0.00013$                  \\
+Num. groups: year:communeid & $$                          & $1326$                      & $$                           & $1326$                     \\
+\hline
+\multicolumn{5}{l}{\scriptsize{$^{***}p<0.01$; $^{**}p<0.05$; $^{*}p<0.1$}}
+\end{tabular}
+\caption{Statistical models}
+\label{table:coefficients}
+\end{center}
+\end{table}
